@@ -36,6 +36,18 @@ const SPECIMENS = [
   { src: "16", bg: "Lilac", skin: "Pink",     face: "Exposed Jaw", ears: "Ear 04", eyes: "Serum M1",         nose: "Plain",       mouth: "Fanged Grin",    chest: "Bare Chest" },
 ].map(s => ({ ...s, url: `assets/m/${s.src}.png`, name: s.costume || s.eyes }));
 const TRAIT_KEYS = [["costume","Costume"],["skin","Skin"],["face","Face"],["eyes","Eyes"],["nose","Nose"],["mouth","Mouth"],["ears","Ears"],["chest","Chest"],["weapon","Weapon"],["bg","Background"]];
+const TRAIT_FILE_OVERRIDES = {
+  costume: {
+    "Hammer-Gold Shark": "shark-hammer-gold-costume",
+    "Purple Dragon": "dragon-purple-costume",
+    "Toxic Green Shark": "shark-toxic-green-costume",
+    "Ghost Purple Shark": "shark-ghost-purple-costume"
+  },
+  weapon: {
+    "Bone Sword": "01-bone-sword", "Rusty Katana": "02-rusty-katana", "Serum Katana": "03-serum-katana",
+    "Toxic Trident": "05-toxic-trident", "Cleaver Staff": "06-cleaver-staff", "Chainsaw": "07-chainsaw"
+  }
+};
 const CDN = {
   serumCalm: "https://id-preview--6b184a85-d85b-4d54-8732-baeab7bf94a8.lovable.app/__l5e/assets-v1/1d772da7-cf59-43e6-924f-1af910c12ddd/serum-calm.png",
   serumMutated: "https://id-preview--6b184a85-d85b-4d54-8732-baeab7bf94a8.lovable.app/__l5e/assets-v1/c8bf6833-9574-446a-874d-4d5b78ce4906/serum-mutated.png",
@@ -515,8 +527,22 @@ function researchLab() {
     title: $("#heroTitle"), selectorId: $("#labSelectorId"), id: $("#labId"), rarity: $("#labRarity"), rarityTag: $("#labRarityTag"),
     mutation: $("#labMutation"), mutationTag: $("#labMutationTag"), classification: $("#labClass"), description: $("#labDescription"), result: $("#labResult")
   };
+  const slug = value => value.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+  const traitAsset = (kind,value,s) => {
+    if (!value) return "";
+    const folder = kind === "weapon" ? "weapon" : kind;
+    let file = TRAIT_FILE_OVERRIDES[kind]?.[value] || slug(value);
+    if (kind === "face") file = `${file}-${slug(s.skin)}`;
+    if (kind === "chest" && value === "Bare Chest") file = `${file}-${slug(s.skin)}`;
+    return `assets/t/${folder}/${file}.png`;
+  };
   const traitChoices = s => [
-    ["Silhouette",s.skin || s.face],["Eyes",s.eyes],["Mouth",s.mouth || s.face],["Body",s.chest || s.costume],["Overlay",s.weapon || s.bg]
+    ["Eyes",s.eyes,"eyes"],
+    ["Mouth",s.mouth,"mouth"],
+    ["Body",s.chest,"chest"],
+    ["Overlay",s.face,"face"],
+    ["Costume",s.costume,"costume"],
+    ["Weapon",s.weapon,"weapon"]
   ];
   const render = i => {
     const s=SPECIMENS[i], id=`MF-606-${String(i+1).padStart(3,"0")}`, name=mutation(s), rank=rarity(s), choices=traitChoices(s);
@@ -528,8 +554,11 @@ function researchLab() {
     $("#calloutA").textContent="Eyes"; $("#calloutAv").textContent=s.eyes;
     $("#calloutB").textContent=s.mouth?"Mouth":"Face"; $("#calloutBv").textContent=s.mouth||s.face;
     $("#calloutC").textContent=s.costume?"Costume":"Body"; $("#calloutCv").textContent=s.costume||s.chest;
-    traits.innerHTML=choices.map(([label,value],k)=>`<button class="traitbtn${k===0?" is-active":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Unclassified")}"><img src="${s.url}" alt=""><span>${esc(label)}</span></button>`).join("");
-    $("#labTraitDetail").textContent=`Silhouette · ${s.skin} cellular profile`;
+    traits.innerHTML=choices.map(([label,value,kind],k)=>{
+      const missing=!value, status=missing ? `${label} scan · trait not detected` : `${label} · ${value}`;
+      return `<button class="traitbtn${k===0?" is-active":""}${missing?" is-unavailable":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Trait not detected")}">${missing?`<span class="traitbtn__missing" aria-hidden="true">NO<br>SIGNAL</span>`:`<img src="${traitAsset(kind,value,s)}" alt="${esc(value)} ${esc(label.toLowerCase())} trait">`}<span>${esc(label)}</span><small>${esc(missing?"Not detected":value)}</small><i class="sr-only">${esc(status)}</i></button>`;
+    }).join("");
+    $("#labTraitDetail").textContent=`Eyes · ${s.eyes} isolated trait scan`;
     $$("[data-lab-spec]").forEach((b,k)=>{b.classList.toggle("is-active",k===i);b.setAttribute("aria-pressed",String(k===i));});
     flask.classList.remove("is-switching"); void flask.offsetWidth; flask.classList.add("is-switching");
   };
