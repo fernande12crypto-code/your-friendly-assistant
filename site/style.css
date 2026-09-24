@@ -90,7 +90,11 @@ p{margin:0;text-wrap:pretty}
 
 /* ---------- Specimen shelves ---------- */
 .filters{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}
-.shelves{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(100 * var(--cell)),1fr));column-gap:0;row-gap:36px;padding:28px 20px 24px;background:var(--indigo);border:4px solid var(--ink);border-radius:14px}
+.shelves{display:grid;grid-template-columns:repeat(3,1fr);column-gap:0;row-gap:36px;padding:28px 20px 24px;background:var(--indigo);border:4px solid var(--ink);border-radius:14px}
+@media (max-width:560px){.shelves{--cell:1.1px}}
+.wallpager{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:24px}
+.wallpager__info{font:600 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;min-width:120px;text-align:center}
+.arrow:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;background:transparent;transform:none}
 .spec{position:relative;display:grid;grid-template-rows:calc(110 * var(--cell)) 18px auto;justify-items:center;align-items:end;padding:0;border:0;background:transparent;cursor:pointer;text-align:center;color:var(--paper)}
 .spec canvas{transition:transform .12s}
 .spec:hover canvas,.spec:focus-visible canvas{transform:translateY(calc(var(--cell) * -3))}
