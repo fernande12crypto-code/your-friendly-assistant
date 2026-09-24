@@ -882,3 +882,10 @@ preload().then(() => {
 });
 window.MF = { parseHandle, parseAddress, bechVerify, polymod, CHARSET, BECH32M };
 })();
+
+/* flask click: drop the serum */
+(()=>{const f=document.getElementById("labFlask");if(!f)return;let busy=false;
+const go=()=>{if(busy)return;busy=true;f.classList.add("is-dropping");
+setTimeout(()=>{f.classList.add("is-splash")},850);
+setTimeout(()=>{f.classList.remove("is-dropping","is-splash");busy=false},1500);};
+f.addEventListener("click",go);f.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});})();

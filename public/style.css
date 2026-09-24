@@ -449,3 +449,20 @@ body{background:var(--lab-bg);color:var(--lab-text)}
 @media(max-width:1180px){.reaction{grid-column:2;grid-row:3}.timeline{grid-column:3;grid-row:3}.traitscan{grid-column:2/4;grid-row:4}}
 /* Timeline fits its column: 2x2 */
 @media(min-width:761px){.timeline{min-width:0;overflow:hidden}.timeline ol{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.timeline li{min-width:0;min-height:96px;overflow-wrap:anywhere}.timeline li:nth-child(3){order:4}.timeline li:nth-child(4){order:3}.timeline li:nth-child(2)::after{content:"↓";right:50%;top:auto;bottom:-14px}.timeline li:nth-child(3)::after{content:"←";right:auto;left:-14px;top:45%}}
+/* premium SVG flask */
+.labflask{position:relative;width:min(80%,330px);margin-top:10px;margin-bottom:60px;cursor:pointer;transition:transform .35s ease,filter .35s ease;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--lab-pink) 30%,transparent));outline:none}
+.labflask:hover,.labflask:focus-visible{transform:scale(1.035);filter:drop-shadow(0 0 30px color-mix(in srgb,var(--lab-pink) 60%,transparent))}
+.labflask__svg{display:block;width:100%;height:auto;overflow:visible}
+.labflask__wave{animation:lfWave 4s linear infinite}.labflask__wave--2{animation-duration:6s;animation-direction:reverse}
+@keyframes lfWave{to{transform:translateX(-80px)}}
+.labflask__liquid{animation:lfBob 3.4s ease-in-out infinite}@keyframes lfBob{50%{transform:translateY(-3px)}}
+.lfb{fill:color-mix(in srgb,#fff 25%,transparent);stroke:#fff;stroke-opacity:.7;stroke-width:1.2;animation:lfRise 3.6s ease-in infinite}
+.lfb--2{animation-delay:.8s}.lfb--3{animation-delay:1.6s;animation-duration:4.4s}.lfb--4{animation-delay:2.2s}.lfb--5{animation-delay:2.9s}
+@keyframes lfRise{0%{transform:translateY(0);opacity:0}15%{opacity:1}85%{opacity:.8}100%{transform:translateY(-88px);opacity:0}}
+.labflask__halo{animation:lfPulse 3s ease-in-out infinite}@keyframes lfPulse{50%{opacity:.6}}
+.labflask__drop{transform-box:fill-box;transform-origin:center top;animation:lfHang 2.4s ease-in-out infinite}
+@keyframes lfHang{50%{transform:scaleY(1.12)}}
+.labflask.is-dropping .labflask__drop{animation:lfFall .9s cubic-bezier(.5,0,.9,.5) forwards}
+@keyframes lfFall{0%{transform:translateY(0)}90%{transform:translateY(172px);opacity:1}100%{transform:translateY(176px) scale(1.6,.3);opacity:0}}
+.labflask.is-splash .labflask__liquid{animation:lfSplash .6s ease-out}@keyframes lfSplash{30%{transform:translateY(-6px)}60%{transform:translateY(2px)}}
+@media (prefers-reduced-motion:reduce){.labflask *{animation:none!important}}
