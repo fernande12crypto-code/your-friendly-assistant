@@ -345,7 +345,8 @@ function renderGlass(cv, shape, d) {
     for (let y = cy0; y <= cy1; y++) for (let x = cx0; x <= cx1; x++) put(x, y, (x === cx0 || x === cx1 || y === cy0) ? corkD : (x + y) % 7 === 0 ? corkD : cork); }
   ctx.putImageData(out, 0, 0);
 }
-function shelves() { $$(".spec").forEach(b => renderGlass(b.querySelector("canvas"), b.dataset.shape, spriteNoBg(SPECIMENS[+b.dataset.i].url))); }
+  const glassDone = new Set();
+  function drawGlass(b) { const i = +b.dataset.i; if (glassDone.has(i)) return; glassDone.add(i); renderGlass(b.querySelector("canvas"), b.dataset.shape, spriteNoBg(SPECIMENS[i].url)); }
 
 /* ---------- Devil camera feeds ---------- */
 function devilCam() {
