@@ -310,7 +310,7 @@ textarea.input{min-height:100px;word-break:break-all;font-size:15px}
 .hotspot:hover::before,.hotspot:focus-visible::before{background:var(--pink);box-shadow:0 0 0 6px var(--lime)}
 @keyframes hotpulse{50%{transform:translate(-50%,-50%) scale(1.25)}}
 .hotlab__status{margin:12px auto 0;width:min(100% - 32px,1415px);color:var(--mute);font:700 13px/1.3 var(--mono)}
-@media(max-width:760px){.hotlab__head{grid-template-columns:1fr}.hotlab__frame{width:100%;margin:0}.hotspot span{display:none}.hotspot::before{width:13px;height:13px;border-width:2px}.hotlab__status{text-align:center}}
+@media(max-width:760px){.hotlab__head{grid-template-columns:minmax(0,1fr)}.hotlab__head>*{min-width:0}.hotlab__frame{width:100%;margin:0}.hotspot span{display:none}.hotspot::before{width:13px;height:13px;border-width:2px}.hotlab__status{text-align:center}}
 
 .hotdrawer{padding:0;border:0;background:transparent;width:min(860px,calc(100vw - 24px));max-width:none;overflow:visible;color:var(--ink)}
 .hotdrawer::backdrop{background:rgba(14,11,36,.78);backdrop-filter:blur(4px)}
