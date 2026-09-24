@@ -3,4 +3,4 @@
 - [x] Remove Abstract and renumber the remaining reports to 1–3
 - [x] Remove the Top Secret report control and dialog
 - [x] Make all scroll-reveal text visible immediately
-- [ ] Verify desktop/mobile behavior and page errors
+- [x] Verify desktop/mobile behavior and page errors
