@@ -791,7 +791,7 @@ let booted = false;
 preload().then(() => {
   if (booted) return; booted = true;
   initArts();
-  flaskLab(); shelves(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
+  flaskLab(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
   requestAnimationFrame(() => requestAnimationFrame(reveal));
   setTimeout(reveal, 60);
 });
