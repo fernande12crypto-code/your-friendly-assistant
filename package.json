@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "node serve.mjs",
+    "build:dev": "node --check public/main.js",
     "build": "node --check public/main.js"
   }
 }
