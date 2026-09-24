@@ -544,6 +544,21 @@ function researchLab() {
     ["Costume",s.costume,"costume"],
     ["Weapon",s.weapon,"weapon"]
   ];
+  const stage=$("#anatomyStage"), tip=$("#anaTip");
+  let current=SPECIMENS[0];
+  const partInfo={eyes:["Eyes",s=>s.eyes],mouth:["Mouth",s=>s.mouth||s.face],body:["Body",s=>s.chest],weapon:["Weapon",s=>s.weapon],costume:["Costume",s=>s.costume]};
+  const hideTip=()=>{tip.classList.remove("is-on");$$(".hotspot",stage).forEach(h=>h.classList.remove("is-on"));};
+  const showTip=h=>{
+    const [label,get]=partInfo[h.dataset.part]; const v=get(current);
+    $("#anaTipLabel").textContent=label; $("#anaTipValue").textContent=v||"None detected";
+    const sr=stage.getBoundingClientRect(), hr=h.getBoundingClientRect();
+    const y=hr.top+hr.height/2-sr.top, x=hr.left+hr.width/2-sr.left;
+    tip.style.top=`${y-tip.offsetHeight/2}px`;
+    tip.style.setProperty("--len",`${Math.max(20,(sr.width-sr.width*0.02-tip.offsetWidth)-x)}px`);
+    $$(".hotspot",stage).forEach(o=>o.classList.toggle("is-on",o===h)); tip.classList.add("is-on");
+  };
+  $$(".hotspot",stage).forEach(h=>{h.addEventListener("mouseenter",()=>showTip(h));h.addEventListener("focus",()=>showTip(h));h.addEventListener("click",()=>showTip(h));});
+  $(".anatomy__figure",stage).addEventListener("mouseleave",hideTip);
   const render = i => {
     const s=SPECIMENS[i], id=`MF-606-${String(i+1).padStart(3,"0")}`, name=mutation(s), rank=rarity(s), choices=traitChoices(s);
     fields.specimen.src=fields.silhouette.src=fields.anatomy.src=fields.reaction.src=s.url;
@@ -551,9 +566,7 @@ function researchLab() {
     fields.rarity.textContent=fields.rarityTag.textContent=rank; fields.mutation.textContent=name;
     fields.mutationTag.textContent=(s.costume?"COSTUME":s.face==="Exposed Jaw"?"ANATOMICAL":"CELLULAR")+" MUTATION";
     fields.classification.textContent=`${s.face} / ${s.skin}`; fields.description.textContent=descriptions[i%descriptions.length]; fields.result.textContent=name;
-    $("#calloutA").textContent="Eyes"; $("#calloutAv").textContent=s.eyes;
-    $("#calloutB").textContent=s.mouth?"Mouth":"Face"; $("#calloutBv").textContent=s.mouth||s.face;
-    $("#calloutC").textContent=s.costume?"Costume":"Body"; $("#calloutCv").textContent=s.costume||s.chest;
+    current=s; hideTip();
     traits.innerHTML=choices.map(([label,value,kind],k)=>{
       const missing=!value, status=missing ? `${label} scan failed · no trait signature detected` : `${label} · ${value}`;
       return `<button class="traitbtn${k===0?" is-active":""}${missing?" is-unavailable":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Scan failed — no trait signature detected")}">${missing?`<span class="traitbtn__missing" aria-hidden="true">SCAN<br>FAILED</span>`:`<img src="${traitAsset(kind,value,s)}" alt="${esc(value)} ${esc(label.toLowerCase())} trait">`}<span>${esc(label)}</span><small>${esc(missing?"No trait detected":value)}</small><i class="sr-only">${esc(status)}</i></button>`;

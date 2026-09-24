@@ -120,13 +120,18 @@
     </section>
 
     <section class="anatomy techpanel">
-      <div class="techpanel__title">Anatomy diagram</div>
-      <div class="anatomy__stage">
+      <div class="techpanel__title">Anatomy diagram <em class="anatomy__hint">Hover a body part</em></div>
+      <div class="anatomy__stage" id="anatomyStage">
         <span class="scanline" aria-hidden="true"></span>
-        <img id="labAnatomy" src="assets/m/01.png" alt="Enlarged anatomy scan of selected mutant">
-        <span class="callout callout--a"><i></i><b id="calloutA">Eyes</b><small id="calloutAv">Cyclops</small></span>
-        <span class="callout callout--b"><i></i><b id="calloutB">Mouth</b><small id="calloutBv">Forked Tongue</small></span>
-        <span class="callout callout--c"><i></i><b id="calloutC">Body</b><small id="calloutCv">Stitched Jacket</small></span>
+        <div class="anatomy__figure">
+          <img id="labAnatomy" src="assets/m/01.png" alt="Enlarged anatomy scan of selected mutant">
+          <button type="button" class="hotspot hotspot--costume" data-part="costume" aria-label="Costume"></button>
+          <button type="button" class="hotspot hotspot--body" data-part="body" aria-label="Body"></button>
+          <button type="button" class="hotspot hotspot--weapon" data-part="weapon" aria-label="Weapon"></button>
+          <button type="button" class="hotspot hotspot--eyes" data-part="eyes" aria-label="Eyes"></button>
+          <button type="button" class="hotspot hotspot--mouth" data-part="mouth" aria-label="Mouth"></button>
+        </div>
+        <span class="anatip" id="anaTip" aria-live="polite"><i class="anatip__line"></i><b id="anaTipLabel">Eyes</b><small id="anaTipValue">Cyclops</small></span>
       </div>
     </section>
 
