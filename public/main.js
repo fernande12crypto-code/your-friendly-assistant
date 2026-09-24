@@ -586,7 +586,7 @@ function researchLab() {
     flask.classList.remove("is-swapping");
   };
   const swapAtImpact = i => {
-    const next=(i+SPECIMENS.length)%SPECIMENS.length;
+    const next=(i+1)%SPECIMENS.length;
     fields.specimenNext.setAttribute("href",SPECIMENS[next].url);
     flask.classList.remove("is-swapping"); void flask.offsetWidth; flask.classList.add("is-swapping");
     setSerumColor(colorIndex+1); render(next);
