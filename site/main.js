@@ -37,8 +37,8 @@ const SPECIMENS = [
 ].map(s => ({ ...s, url: `assets/m/${s.src}.png`, name: s.costume || s.eyes }));
 const TRAIT_KEYS = [["costume","Costume"],["skin","Skin"],["face","Face"],["eyes","Eyes"],["nose","Nose"],["mouth","Mouth"],["ears","Ears"],["chest","Chest"],["weapon","Weapon"],["bg","Background"]];
 const CDN = {
-  serumCalm: "/__l5e/assets-v1/1d772da7-cf59-43e6-924f-1af910c12ddd/serum-calm.png",
-  serumMutated: "/__l5e/assets-v1/c8bf6833-9574-446a-874d-4d5b78ce4906/serum-mutated.png",
+  serumCalm: "https://id-preview--6b184a85-d85b-4d54-8732-baeab7bf94a8.lovable.app/__l5e/assets-v1/1d772da7-cf59-43e6-924f-1af910c12ddd/serum-calm.png",
+  serumMutated: "https://id-preview--6b184a85-d85b-4d54-8732-baeab7bf94a8.lovable.app/__l5e/assets-v1/c8bf6833-9574-446a-874d-4d5b78ce4906/serum-mutated.png",
 };
 const HOTSPOTS = [
   { id:"tube-pink", label:"Pink serum tube", kind:"spec", i:0, x:8.8, y:13.8, w:7.5, h:20 },
