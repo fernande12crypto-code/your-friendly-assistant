@@ -2,5 +2,7 @@
 - [x] Add dynamic specimen, anatomy, reaction, timeline, and trait states
 - [x] Preserve and visually align specimen shelves with 3-item paging
 - [x] Preserve Devil, application, interactive lab, FAQ, form, and navigation behavior
+- [x] Show real isolated Eyes, Mouth, Body, Overlay, Costume, and Weapon traits
+- [x] Improve anatomy label spacing and stabilize specimen details border
 - [x] Sync root, public, and site copies
 - [x] Verify desktop/mobile placement, interactions, animation, and errors
