@@ -198,6 +198,8 @@ function hotlab() {
   const close=()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);dlg.close();status.textContent="Select a pulsing marker to inspect it.";};
   $("#hotdrawerClose").addEventListener("click",close);
   dlg.addEventListener("click",e=>{if(e.target===dlg)close();});
+  dlg.addEventListener("cancel",()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);status.textContent="Select a pulsing marker to inspect it.";});
+  document.addEventListener("mf:specimen",e=>show({id:`shelf-${e.detail+1}`,label:`Specimen shelf ${String(e.detail+1).padStart(2,"0")}`,kind:"spec",i:e.detail}));
 }
 
 /* ---------- Preloader ---------- */
@@ -512,7 +514,7 @@ function wall() {
     b.addEventListener("mouseleave", hide);
     b.addEventListener("focus", () => show(b));
     b.addEventListener("blur", hide);
-    b.addEventListener("click", () => { b.classList.add("is-glitch"); setTimeout(() => b.classList.remove("is-glitch"), 600); if (matchMedia("(hover: none)").matches) show(b); });
+    b.addEventListener("click", () => { b.classList.add("is-glitch"); setTimeout(() => b.classList.remove("is-glitch"), 600); if (matchMedia("(hover: none)").matches) show(b); document.dispatchEvent(new CustomEvent("mf:specimen", { detail: +b.dataset.i })); });
   });
   addEventListener("scroll", hide, { passive: true });
   document.addEventListener("keydown", e => e.key === "Escape" && hide());
