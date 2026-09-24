@@ -6,3 +6,4 @@
 - [x] Improve anatomy label spacing and stabilize specimen details border
 - [x] Sync root, public, and site copies
 - [x] Verify desktop/mobile placement, interactions, animation, and errors
+- [x] Serum reaction under chamber, 6 traits in one row, hover labels on anatomy (eyes/mouth/body/weapon/costume)
