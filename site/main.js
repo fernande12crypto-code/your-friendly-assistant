@@ -361,7 +361,8 @@ function devilCam() {
 /* ---------- Lab: serum drop into the flask ---------- */
 function flaskLab() {
   const W = 96, H = 136, OX = 26, OY = 88, L = 80;
-  const cv = $("#flaskCanvas"), ctx = cv.getContext("2d"), box = $("#flask"), rig = box.parentElement;
+  const cv = $("#flaskCanvas"); if (!cv) return;
+  const ctx = cv.getContext("2d"), box = $("#flask"), rig = box.parentElement;
   const out = ctx.createImageData(W, H), P = out.data;
   const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
   const K = { ink: hex("#e6e2ff"), glass: hex("#2f2870"), hi: hex("#8f86d6"), sal: hex("#6fcbe6"), salTop: hex("#a9e6f5"), salBub: hex("#d4f5fc"),
@@ -493,6 +494,48 @@ function flaskLab() {
   new IntersectionObserver(es => { visible = es[0].isIntersecting; visible && !document.hidden ? start() : stop(); }).observe(box);
   document.addEventListener("visibilitychange", () => (document.hidden || !visible ? stop() : start()));
   start();
+}
+
+/* ---------- Interactive research console ---------- */
+function researchLab() {
+  const selectors = $("#labSelectors"), traits = $("#labTraits"), flask = $("#labFlask");
+  if (!selectors || !traits || !flask) return;
+  const rarity = s => s.costume ? "Rare" : s.face === "Exposed Jaw" ? "Uncommon" : "Standard";
+  const mutation = s => s.costume || s.face || s.eyes;
+  const descriptions = [
+    "Cellular structure exhibits a controlled ocular mutation after Serum M1 exposure.",
+    "Jaw structure separated during contact while the subject retained full motor response.",
+    "A high-energy costume mutation bonded permanently to the specimen membrane.",
+    "Neural response remains active despite severe chromatic and facial restructuring."
+  ];
+  const colors = ["#ff3c82","#37dff4","#96f26c","#ffb84d","#9e64ff"];
+  selectors.innerHTML = SPECIMENS.map((s,i)=>`<button class="vial${i===0?" is-active":""}" type="button" data-lab-spec="${i}" aria-label="Load specimen ${String(i+1).padStart(3,"0")}: ${esc(s.name)}" style="--vial:${colors[i%colors.length]}"><img src="${s.url}" alt=""></button>`).join("");
+  const fields = {
+    specimen: $("#labSpecimen"), silhouette: $("#labSilhouette"), anatomy: $("#labAnatomy"), reaction: $("#labReaction"),
+    title: $("#heroTitle"), selectorId: $("#labSelectorId"), id: $("#labId"), rarity: $("#labRarity"), rarityTag: $("#labRarityTag"),
+    mutation: $("#labMutation"), mutationTag: $("#labMutationTag"), classification: $("#labClass"), description: $("#labDescription"), result: $("#labResult")
+  };
+  const traitChoices = s => [
+    ["Silhouette",s.skin || s.face],["Eyes",s.eyes],["Mouth",s.mouth || s.face],["Body",s.chest || s.costume],["Overlay",s.weapon || s.bg]
+  ];
+  const render = i => {
+    const s=SPECIMENS[i], id=`MF-606-${String(i+1).padStart(3,"0")}`, name=mutation(s), rank=rarity(s), choices=traitChoices(s);
+    fields.specimen.src=fields.silhouette.src=fields.anatomy.src=fields.reaction.src=s.url;
+    fields.title.textContent=name.toUpperCase(); fields.selectorId.textContent=fields.id.textContent=id;
+    fields.rarity.textContent=fields.rarityTag.textContent=rank; fields.mutation.textContent=name;
+    fields.mutationTag.textContent=(s.costume?"COSTUME":s.face==="Exposed Jaw"?"ANATOMICAL":"CELLULAR")+" MUTATION";
+    fields.classification.textContent=`${s.face} / ${s.skin}`; fields.description.textContent=descriptions[i%descriptions.length]; fields.result.textContent=name;
+    $("#calloutA").textContent="Eyes"; $("#calloutAv").textContent=s.eyes;
+    $("#calloutB").textContent=s.mouth?"Mouth":"Face"; $("#calloutBv").textContent=s.mouth||s.face;
+    $("#calloutC").textContent=s.costume?"Costume":"Body"; $("#calloutCv").textContent=s.costume||s.chest;
+    traits.innerHTML=choices.map(([label,value],k)=>`<button class="traitbtn${k===0?" is-active":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Unclassified")}"><img src="${s.url}" alt=""><span>${esc(label)}</span></button>`).join("");
+    $("#labTraitDetail").textContent=`Silhouette · ${s.skin} cellular profile`;
+    $$("[data-lab-spec]").forEach((b,k)=>{b.classList.toggle("is-active",k===i);b.setAttribute("aria-pressed",String(k===i));});
+    flask.classList.remove("is-switching"); void flask.offsetWidth; flask.classList.add("is-switching");
+  };
+  selectors.addEventListener("click",e=>{const b=e.target.closest("[data-lab-spec]");if(b)render(+b.dataset.labSpec);});
+  traits.addEventListener("click",e=>{const b=e.target.closest(".traitbtn");if(!b)return;$$('.traitbtn',traits).forEach(x=>x.classList.toggle('is-active',x===b));$("#labTraitDetail").textContent=`${b.dataset.traitLabel} · ${b.dataset.traitValue}`;});
+  render(0);
 }
 
 /* ---------- Specimen wall: tooltip + filters ---------- */
@@ -791,7 +834,7 @@ let booted = false;
 preload().then(() => {
   if (booted) return; booted = true;
   initArts();
-  flaskLab(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
+  researchLab(); flaskLab(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
   requestAnimationFrame(() => requestAnimationFrame(reveal));
   setTimeout(reveal, 60);
 });

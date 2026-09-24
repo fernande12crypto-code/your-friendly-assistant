@@ -1,6 +1,6 @@
-- [ ] Build the reference-led interactive laboratory report using existing specimen assets
-- [ ] Add dynamic specimen, anatomy, reaction, timeline, and trait states
-- [ ] Preserve and visually align specimen shelves with 3-item paging
-- [ ] Preserve Devil, application, interactive lab, FAQ, form, and navigation behavior
-- [ ] Sync root, public, and site copies
-- [ ] Verify desktop/mobile placement, interactions, animation, and errors
+- [x] Build the reference-led interactive laboratory report using existing specimen assets
+- [x] Add dynamic specimen, anatomy, reaction, timeline, and trait states
+- [x] Preserve and visually align specimen shelves with 3-item paging
+- [x] Preserve Devil, application, interactive lab, FAQ, form, and navigation behavior
+- [x] Sync root, public, and site copies
+- [x] Verify desktop/mobile placement, interactions, animation, and errors
