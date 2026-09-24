@@ -1,4 +1,6 @@
-- [ ] Move the image-only interactive lab directly above Appendix
-- [ ] Rename Devil I and Devil II
-- [ ] Replace all DNA loading indicators with the EKG pulse
+- [ ] Build the reference-led interactive laboratory report using existing specimen assets
+- [ ] Add dynamic specimen, anatomy, reaction, timeline, and trait states
+- [ ] Preserve and visually align specimen shelves with 3-item paging
+- [ ] Preserve Devil, application, interactive lab, FAQ, form, and navigation behavior
+- [ ] Sync root, public, and site copies
 - [ ] Verify desktop/mobile placement, interactions, animation, and errors
