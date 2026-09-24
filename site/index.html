@@ -89,12 +89,49 @@
     </aside>
 
     <section class="chamber" aria-label="Active specimen chamber">
-      <div class="dropper" aria-hidden="true"><i></i></div>
-      <div class="chamber__tube" aria-hidden="true"><i></i></div>
-      <div class="chamber__flask" id="labFlask">
-        <span class="chamber__shine" aria-hidden="true"></span>
-        <span class="bubble bubble--1" aria-hidden="true"></span><span class="bubble bubble--2" aria-hidden="true"></span><span class="bubble bubble--3" aria-hidden="true"></span><span class="bubble bubble--4" aria-hidden="true"></span>
-        <img id="labSpecimen" src="assets/m/01.png" alt="Selected mutant specimen">
+      <div class="labflask" id="labFlask" role="button" tabindex="0" aria-label="Laboratory flask — click to release a serum drop">
+        <svg class="labflask__svg" viewBox="0 0 300 470" aria-hidden="true">
+          <defs>
+            <linearGradient id="lfGlass" x1="0" x2="1"><stop offset="0" stop-color="var(--lab-cyan)" stop-opacity=".22"/><stop offset=".35" stop-color="#fff" stop-opacity=".04"/><stop offset=".75" stop-color="var(--lab-pink)" stop-opacity=".06"/><stop offset="1" stop-color="var(--lab-pink)" stop-opacity=".28"/></linearGradient>
+            <linearGradient id="lfLiquid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--lab-pink)" stop-opacity=".95"/><stop offset=".25" stop-color="var(--lab-pink)" stop-opacity=".62"/><stop offset="1" stop-color="#7a2dff" stop-opacity=".72"/></linearGradient>
+            <radialGradient id="lfGlow" cx=".5" cy=".75" r=".55"><stop offset="0" stop-color="var(--lab-pink)" stop-opacity=".55"/><stop offset="1" stop-color="var(--lab-pink)" stop-opacity="0"/></radialGradient>
+            <linearGradient id="lfPip" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="var(--lab-cyan)" stop-opacity=".25"/></linearGradient>
+            <clipPath id="lfClip"><path d="M126 200 V252 L52 392 Q40 420 70 426 H230 Q260 420 248 392 L174 252 V200 Z"/></clipPath>
+          </defs>
+          <!-- pipette -->
+          <g class="labflask__pipette">
+            <rect x="136" y="0" width="28" height="44" rx="12" fill="var(--lab-pink)" opacity=".85"/>
+            <rect x="130" y="40" width="40" height="8" rx="3" fill="var(--lab-text)" opacity=".7"/>
+            <path d="M138 48 H162 V120 L154 148 H146 L138 120 Z" fill="url(#lfPip)" stroke="var(--lab-text)" stroke-opacity=".85" stroke-width="2.5"/>
+            <path d="M141 92 H159 V120 L153 144 H147 L141 120 Z" fill="var(--lab-pink)" opacity=".75"/>
+            <path d="M143 56 V112" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <path class="labflask__drop" d="M150 150 C150 150 143 160 143 165 A7 7 0 0 0 157 165 C157 160 150 150 150 150 Z" fill="var(--lab-pink)"/>
+          <!-- glow -->
+          <ellipse cx="150" cy="380" rx="140" ry="80" fill="url(#lfGlow)" class="labflask__halo"/>
+          <!-- liquid -->
+          <g clip-path="url(#lfClip)">
+            <g class="labflask__liquid">
+              <path class="labflask__wave" d="M-40 330 Q0 322 40 330 T120 330 T200 330 T280 330 T360 330 V440 H-40 Z" fill="url(#lfLiquid)"/>
+              <path class="labflask__wave labflask__wave--2" d="M-40 334 Q0 342 40 334 T120 334 T200 334 T280 334 T360 334 V440 H-40 Z" fill="var(--lab-pink)" opacity=".25"/>
+            </g>
+            <rect x="0" y="329" width="300" height="3" fill="#fff" opacity=".45"/>
+            <circle class="lfb lfb--1" cx="110" cy="410" r="5"/><circle class="lfb lfb--2" cx="160" cy="415" r="3.5"/><circle class="lfb lfb--3" cx="190" cy="405" r="6"/><circle class="lfb lfb--4" cx="135" cy="418" r="2.5"/><circle class="lfb lfb--5" cx="210" cy="412" r="3"/>
+          </g>
+          <!-- glass body -->
+          <path d="M126 200 V252 L52 392 Q40 420 70 426 H230 Q260 420 248 392 L174 252 V200 Z" fill="url(#lfGlass)" stroke="var(--lab-text)" stroke-opacity=".9" stroke-width="4" stroke-linejoin="round" class="labflask__glass"/>
+          <path d="M126 200 V252 L52 392 Q40 420 70 426 H230 Q260 420 248 392 L174 252 V200" fill="none" stroke="var(--lab-pink)" stroke-width="9" stroke-opacity=".22" class="labflask__rimlight"/>
+          <!-- rim -->
+          <rect x="116" y="188" width="68" height="14" rx="7" fill="var(--lab-panel)" stroke="var(--lab-text)" stroke-width="3.5"/>
+          <rect x="120" y="191" width="30" height="3" rx="1.5" fill="#fff" opacity=".6"/>
+          <!-- graduations -->
+          <g stroke="var(--lab-text)" stroke-opacity=".5" stroke-width="2"><path d="M164 300 H178"/><path d="M170 330 H190"/><path d="M178 360 H196"/></g>
+          <!-- reflections -->
+          <path d="M134 208 V256 L72 376" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="4" stroke-linecap="round"/>
+          <path d="M84 396 Q80 410 92 414" fill="none" stroke="var(--lab-cyan)" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+          <path d="M226 386 L236 404" stroke="var(--lab-pink)" stroke-opacity=".8" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <img id="labSpecimen" hidden alt="" style="display:none!important">
       </div>
       <div class="chamber__base" aria-hidden="true"><i></i></div>
       <span class="chamber__scan">Live containment · M1</span>
