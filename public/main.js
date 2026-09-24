@@ -345,7 +345,8 @@ function renderGlass(cv, shape, d) {
     for (let y = cy0; y <= cy1; y++) for (let x = cx0; x <= cx1; x++) put(x, y, (x === cx0 || x === cx1 || y === cy0) ? corkD : (x + y) % 7 === 0 ? corkD : cork); }
   ctx.putImageData(out, 0, 0);
 }
-function shelves() { $$(".spec").forEach(b => renderGlass(b.querySelector("canvas"), b.dataset.shape, spriteNoBg(SPECIMENS[+b.dataset.i].url))); }
+  const glassDone = new Set();
+  function drawGlass(b) { const i = +b.dataset.i; if (glassDone.has(i)) return; glassDone.add(i); renderGlass(b.querySelector("canvas"), b.dataset.shape, spriteNoBg(SPECIMENS[i].url)); }
 
 /* ---------- Devil camera feeds ---------- */
 function devilCam() {
@@ -519,14 +520,28 @@ function wall() {
   addEventListener("scroll", hide, { passive: true });
   document.addEventListener("keydown", e => e.key === "Escape" && hide());
 
+  /* Pager: 3 specimens per page, prev/next buttons instead of scrolling */
   const tests = { all: () => true, costume: s => !!s.costume, melting: s => s.face === "Melting", jaw: s => s.face === "Exposed Jaw" };
+  const PER_PAGE = 3;
+  let pageList = $$(".spec"), page = 0;
+  const renderPage = () => {
+    const start = page * PER_PAGE, slice = pageList.slice(start, start + PER_PAGE);
+    $$(".spec").forEach(el => (el.hidden = true));
+    slice.forEach(el => { el.hidden = false; drawGlass(el); if (!reduced()) { el.classList.add("is-glitch"); setTimeout(() => el.classList.remove("is-glitch"), 450); } });
+    $("#wallPrev").disabled = page === 0;
+    $("#wallNext").disabled = start + PER_PAGE >= pageList.length;
+    $("#wallInfo").textContent = pageList.length ? `${start + 1} – ${start + slice.length} / ${pageList.length}` : "0 / 0";
+    $("#wallStatus").textContent = `${pageList.length} specimens shown`;
+  };
+  $("#wallPrev").addEventListener("click", () => { if (page > 0) { page--; renderPage(); } });
+  $("#wallNext").addEventListener("click", () => { if ((page + 1) * PER_PAGE < pageList.length) { page++; renderPage(); } });
   $("#filters").addEventListener("click", e => {
     const btn = e.target.closest("[data-filter]"); if (!btn) return;
     $$("[data-filter]").forEach(b => { b.setAttribute("aria-pressed", String(b === btn)); b.classList.toggle("is-on", b === btn); });
-    let n = 0;
-    $$(".spec").forEach(el => { const ok = tests[btn.dataset.filter](SPECIMENS[+el.dataset.i]); el.hidden = !ok; if (ok) { n++; if (!reduced()) { el.classList.add("is-glitch"); setTimeout(() => el.classList.remove("is-glitch"), 450); } } });
-    $("#wallStatus").textContent = `${n} specimens shown`;
+    pageList = $$(".spec").filter(el => tests[btn.dataset.filter](SPECIMENS[+el.dataset.i]));
+    page = 0; renderPage();
   });
+  renderPage();
 }
 
 /* ---------- Mutation index (periodic table) ---------- */
@@ -776,7 +791,7 @@ let booted = false;
 preload().then(() => {
   if (booted) return; booted = true;
   initArts();
-  flaskLab(); shelves(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
+  flaskLab(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
   requestAnimationFrame(() => requestAnimationFrame(reveal));
   setTimeout(reveal, 60);
 });
