@@ -142,7 +142,7 @@ function build() {
 function hotlab() {
   const dlg = $("#hotdrawer"), body = $("#hotdrawerBody"), title = $("#hotdrawerTitle"), code = $("#hotdrawerCode");
   let loadTimer = 0, mutateTimer = 0, faceTimer = 0;
-  const dnaLoader = `<div class="hotdrawer__loading" role="status"><div class="ld-dna" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><b>DECODING SAMPLE...</b></div>`;
+  const dnaLoader = `<div class="hotdrawer__loading" role="status"><svg class="ld-ekg" viewBox="0 0 64 32" aria-hidden="true"><polyline points="0,16 14,16 20,6 28,26 34,16 64,16" /></svg><b>DECODING SAMPLE...</b></div>`;
   const traitList = s => `<dl class="hotdrawer__traits">${TRAIT_KEYS.filter(([k]) => s[k]).map(([k,l]) => `<dt>${l}</dt><dd>${esc(s[k])}</dd>`).join("")}</dl>`;
   const specimen = i => {
     const s = SPECIMENS[i];
@@ -736,7 +736,7 @@ function form() {
     if (busy || H.state !== "ok" || A.state !== "ok") return;
     if (lastOk === A.value) { setStatus("duplicate", "ALREADY MUTATED", "This address is already registered."); return; }
     busy = true; refresh(); btn.setAttribute("aria-busy", "true");
-    setStatus("submitting", "INJECTING SERUM...", "", `<div class="ld-dna" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>`);
+    setStatus("submitting", "INJECTING SERUM...", "", `<svg class="ld-ekg" viewBox="0 0 64 32" aria-hidden="true"><polyline points="0,16 14,16 20,6 28,26 34,16 64,16" /></svg>`);
     const hp = $("#hpField").value;
     const payload = { x_handle: H.value, zec_address: A.value, address_type: A.type, submitted_at: new Date().toISOString(), hp };
     const res = hp ? (await new Promise(r => setTimeout(r, 900)), "success") : await send(payload);

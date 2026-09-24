@@ -255,18 +255,11 @@ textarea.input{min-height:100px;word-break:break-all;font-size:15px}
 .arrow:hover{background:color-mix(in srgb,var(--bink) 6%,var(--bsurf))}
 .pad__x{border-radius:8px}
 
-/* ---------- Loader (DNA) ---------- */
-.ld-dna{--dna:var(--yellow);display:flex;gap:8px;height:36px}
-.status .ld-dna{--dna:var(--ink)}
-.ld-dna i{position:relative;width:8px;height:36px}
-.ld-dna i::before,.ld-dna i::after{content:"";position:absolute;top:0;left:0;width:8px;height:8px;border-radius:50%;background:var(--dna);animation:dna 1.4s ease-in-out infinite}
-.ld-dna i::after{opacity:.4}
-.ld-dna i:nth-child(1)::after{animation-delay:-.7s}
-.ld-dna i:nth-child(2)::before{animation-delay:-.15s}.ld-dna i:nth-child(2)::after{animation-delay:-.85s}
-.ld-dna i:nth-child(3)::before{animation-delay:-.3s}.ld-dna i:nth-child(3)::after{animation-delay:-1s}
-.ld-dna i:nth-child(4)::before{animation-delay:-.45s}.ld-dna i:nth-child(4)::after{animation-delay:-1.15s}
-.ld-dna i:nth-child(5)::before{animation-delay:-.6s}.ld-dna i:nth-child(5)::after{animation-delay:-1.3s}
-@keyframes dna{0%,100%{transform:translateY(0)}50%{transform:translateY(28px)}}
+/* ---------- Loader (Pulse EKG) ---------- */
+.ld-ekg{--ekg-ink:currentColor;width:128px;height:64px;color:var(--yellow);overflow:visible}
+.status .ld-ekg{color:var(--ink)}
+.ld-ekg polyline{fill:none;stroke:var(--ekg-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:90;stroke-dashoffset:90;animation:ekg 1.6s linear infinite}
+@keyframes ekg{0%{stroke-dashoffset:90}60%,75%{stroke-dashoffset:0}100%{stroke-dashoffset:-90}}
 
 /* ---------- Ribbons (infinite ribbon) ---------- */
 .ribbons{position:relative;display:grid;place-items:center;height:clamp(150px,15vw,200px);overflow:hidden}
@@ -280,9 +273,7 @@ textarea.input{min-height:100px;word-break:break-all;font-size:15px}
 @keyframes ribbonRev{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 
 /* ---------- Hero desk ---------- */
-.hotlab{padding:clamp(28px,4vw,56px) 0 clamp(48px,7vw,96px);background:var(--night);border-bottom:4px solid var(--ink)}
-.hotlab__head{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,420px);gap:12px 40px;align-items:end;margin-bottom:24px}
-.hotlab__head .kicker{grid-column:1/-1}.hotlab__head h1{font-size:clamp(42px,7vw,102px)}.hotlab__head>p:last-child{color:var(--mute);font-weight:700;font-size:18px}
+.hotlab{padding:0;background:var(--night)}
 .hotlab__frame{position:relative;width:min(100%,1415px);aspect-ratio:1415/1111;margin:auto;border-block:4px solid var(--ink);overflow:hidden;background:var(--indigo)}
 .hotlab__art{width:100%;height:100%;object-fit:contain;image-rendering:auto}
 .hotlab__spots{position:absolute;inset:0}
@@ -292,7 +283,7 @@ textarea.input{min-height:100px;word-break:break-all;font-size:15px}
 .hotspot span{position:absolute;left:50%;bottom:4px;transform:translate(-50%,6px);width:max-content;max-width:180px;padding:5px 8px;background:var(--ink);color:var(--paper);font:800 11px/1.1 var(--f);opacity:0;pointer-events:none;transition:opacity .12s,transform .12s}
 .hotspot:hover span,.hotspot:focus-visible span{opacity:1;transform:translate(-50%,0)}
 
-@media(max-width:760px){.hotlab__head{grid-template-columns:minmax(0,1fr)}.hotlab__head>*{min-width:0}.hotlab__frame{width:100%;margin:0}.hotspot span{display:none}}
+@media(max-width:760px){.hotlab__frame{width:100%;margin:0}.hotspot span{display:none}}
 
 .hotdrawer{padding:0;border:0;background:transparent;width:min(860px,calc(100vw - 24px));max-width:none;overflow:visible;color:var(--ink)}
 .hotdrawer::backdrop{background:rgba(14,11,36,.78);backdrop-filter:blur(4px)}

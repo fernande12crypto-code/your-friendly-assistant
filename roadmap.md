@@ -1,6 +1,4 @@
-- [x] Move the interactive lab directly above the footer
-- [x] Hide hotspot markers while preserving hover labels and click actions
-- [x] Remove Abstract and renumber the remaining reports to 1–3
-- [x] Remove the Top Secret report control and dialog
-- [x] Make all scroll-reveal text visible immediately
-- [x] Verify desktop/mobile behavior and page errors
+- [ ] Move the image-only interactive lab directly above Appendix
+- [ ] Rename Devil I and Devil II
+- [ ] Replace all DNA loading indicators with the EKG pulse
+- [ ] Verify desktop/mobile placement, interactions, animation, and errors
