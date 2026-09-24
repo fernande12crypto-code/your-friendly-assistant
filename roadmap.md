@@ -7,3 +7,5 @@
 - [x] Sync root, public, and site copies
 - [x] Verify desktop/mobile placement, interactions, animation, and errors
 - [x] Serum reaction under chamber, 6 traits in one row, hover labels on anatomy (eyes/mouth/body/weapon/costume)
+- [x] Synchronize flask drops with specimen, serum color, rail, details, and anatomy updates
+- [x] Add fixed-position specimen preview navigation in the details panel

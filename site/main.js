@@ -523,7 +523,7 @@ function researchLab() {
   const colors = ["#ff3c82","#37dff4","#96f26c","#ffb84d","#9e64ff"];
   selectors.innerHTML = SPECIMENS.map((s,i)=>`<button class="vial${i===0?" is-active":""}" type="button" data-lab-spec="${i}" aria-label="Load specimen ${String(i+1).padStart(3,"0")}: ${esc(s.name)}" style="--vial:${colors[i%colors.length]}"><img src="${s.url}" alt=""></button>`).join("");
   const fields = {
-    specimen: $("#labSpecimen"), silhouette: $("#labSilhouette"), anatomy: $("#labAnatomy"), reaction: $("#labReaction"),
+    specimen: $("#labSpecimen"), specimenNext: $("#labSpecimenNext"), silhouette: $("#labSilhouette"), anatomy: $("#labAnatomy"), reaction: $("#labReaction"),
     title: $("#heroTitle"), selectorId: $("#labSelectorId"), id: $("#labId"), rarity: $("#labRarity"), rarityTag: $("#labRarityTag"),
     mutation: $("#labMutation"), mutationTag: $("#labMutationTag"), classification: $("#labClass"), description: $("#labDescription"), result: $("#labResult")
   };
@@ -545,7 +545,7 @@ function researchLab() {
     ["Weapon",s.weapon,"weapon"]
   ];
   const stage=$("#anatomyStage"), tip=$("#anaTip");
-  let current=SPECIMENS[0];
+  let current=SPECIMENS[0], activeIndex=0, colorIndex=0, cycleTimer=0, impactTimer=0, finishTimer=0, busy=false;
   const partInfo={eyes:["Eyes",s=>s.eyes],mouth:["Mouth",s=>s.mouth||s.face],body:["Body",s=>s.chest],weapon:["Weapon",s=>s.weapon],costume:["Costume",s=>s.costume]};
   const hideTip=()=>{tip.classList.remove("is-on");$$(".anahot",stage).forEach(h=>h.classList.remove("is-on"));};
   const showTip=h=>{
@@ -559,9 +559,14 @@ function researchLab() {
   };
   $$(".anahot",stage).forEach(h=>{h.addEventListener("mouseenter",()=>showTip(h));h.addEventListener("focus",()=>showTip(h));h.addEventListener("click",()=>showTip(h));});
   $(".anatomy__figure",stage).addEventListener("mouseleave",hideTip);
+  const setSerumColor = i => {
+    colorIndex=(i+colors.length)%colors.length;
+    flask.closest(".chamber")?.style.setProperty("--serum-color",colors[colorIndex]);
+  };
   const render = i => {
     const s=SPECIMENS[i], id=`MF-606-${String(i+1).padStart(3,"0")}`, name=mutation(s), rank=rarity(s), choices=traitChoices(s);
-    fields.specimen.src=fields.silhouette.src=fields.anatomy.src=fields.reaction.src=s.url;
+    fields.silhouette.src=fields.anatomy.src=fields.reaction.src=s.url;
+    fields.silhouette.alt=`${name} specimen ${id}`;
     fields.title.textContent=name.toUpperCase(); fields.selectorId.textContent=fields.id.textContent=id;
     fields.rarity.textContent=fields.rarityTag.textContent=rank; fields.mutation.textContent=name;
     fields.mutationTag.textContent=(s.costume?"COSTUME":s.face==="Exposed Jaw"?"ANATOMICAL":"CELLULAR")+" MUTATION";
@@ -573,11 +578,40 @@ function researchLab() {
     }).join("");
     $("#labTraitDetail").textContent=`Eyes · ${s.eyes} isolated trait scan`;
     $$("[data-lab-spec]").forEach((b,k)=>{b.classList.toggle("is-active",k===i);b.setAttribute("aria-pressed",String(k===i));});
-    flask.classList.remove("is-switching"); void flask.offsetWidth; flask.classList.add("is-switching");
+    activeIndex=i;
   };
-  selectors.addEventListener("click",e=>{const b=e.target.closest("[data-lab-spec]");if(b)render(+b.dataset.labSpec);});
+  const setFlaskImage = i => {
+    fields.specimen.setAttribute("href",SPECIMENS[i].url);
+    fields.specimenNext.setAttribute("href",SPECIMENS[i].url);
+    flask.classList.remove("is-swapping");
+  };
+  const swapAtImpact = i => {
+    const next=(i+SPECIMENS.length)%SPECIMENS.length;
+    fields.specimenNext.setAttribute("href",SPECIMENS[next].url);
+    flask.classList.remove("is-swapping"); void flask.offsetWidth; flask.classList.add("is-swapping");
+    setSerumColor(colorIndex+1); render(next);
+    window.setTimeout(()=>{fields.specimen.setAttribute("href",SPECIMENS[next].url);flask.classList.remove("is-swapping");fields.specimenNext.setAttribute("href",SPECIMENS[next].url);},250);
+  };
+  const clearCycle = () => { clearTimeout(cycleTimer);clearTimeout(impactTimer);clearTimeout(finishTimer);busy=false;flask.classList.remove("is-dropping","is-splash","is-swapping"); };
+  const schedule = () => { cycleTimer=window.setTimeout(runDrop,reduced()?3000:2800); };
+  const runDrop = () => {
+    if(busy)return;
+    busy=true;
+    if(reduced()){
+      swapAtImpact(activeIndex);busy=false;schedule();return;
+    }
+    flask.classList.add("is-dropping");
+    impactTimer=window.setTimeout(()=>{flask.classList.add("is-splash");swapAtImpact(activeIndex);},850);
+    finishTimer=window.setTimeout(()=>{flask.classList.remove("is-dropping","is-splash");busy=false;schedule();},1500);
+  };
+  const select = i => { clearCycle();render(i);setFlaskImage(i);setSerumColor(i);schedule(); };
+  selectors.addEventListener("click",e=>{const b=e.target.closest("[data-lab-spec]");if(b)select(+b.dataset.labSpec);});
+  $("#labPrev")?.addEventListener("click",()=>select((activeIndex-1+SPECIMENS.length)%SPECIMENS.length));
+  $("#labNext")?.addEventListener("click",()=>select((activeIndex+1)%SPECIMENS.length));
+  flask.addEventListener("click",()=>{clearCycle();runDrop();});
+  flask.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();clearCycle();runDrop();}});
   traits.addEventListener("click",e=>{const b=e.target.closest(".traitbtn");if(!b)return;$$('.traitbtn',traits).forEach(x=>x.classList.toggle('is-active',x===b));$("#labTraitDetail").textContent=`${b.dataset.traitLabel} · ${b.dataset.traitValue}`;});
-  render(0);
+  render(0);setFlaskImage(0);setSerumColor(0);schedule();
 }
 
 /* ---------- Specimen wall: tooltip + filters ---------- */
@@ -883,9 +917,3 @@ preload().then(() => {
 window.MF = { parseHandle, parseAddress, bechVerify, polymod, CHARSET, BECH32M };
 })();
 
-/* flask click: drop the serum */
-(()=>{const f=document.getElementById("labFlask");if(!f)return;let busy=false;
-const go=()=>{if(busy)return;busy=true;f.classList.add("is-dropping");
-setTimeout(()=>{f.classList.add("is-splash")},850);
-setTimeout(()=>{f.classList.remove("is-dropping","is-splash");busy=false},1500);};
-f.addEventListener("click",go);f.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});})();
