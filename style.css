@@ -466,3 +466,4 @@ body{background:var(--lab-bg);color:var(--lab-text)}
 @keyframes lfFall{0%{transform:translateY(0)}90%{transform:translateY(172px);opacity:1}100%{transform:translateY(176px) scale(1.6,.3);opacity:0}}
 .labflask.is-splash .labflask__liquid{animation:lfSplash .6s ease-out}@keyframes lfSplash{30%{transform:translateY(-6px)}60%{transform:translateY(2px)}}
 @media (prefers-reduced-motion:reduce){.labflask *{animation:none!important}}
+.labflask img{display:none!important}
