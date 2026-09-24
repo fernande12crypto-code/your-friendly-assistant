@@ -36,6 +36,37 @@ const SPECIMENS = [
   { src: "16", bg: "Lilac", skin: "Pink",     face: "Exposed Jaw", ears: "Ear 04", eyes: "Serum M1",         nose: "Plain",       mouth: "Fanged Grin",    chest: "Bare Chest" },
 ].map(s => ({ ...s, url: `assets/m/${s.src}.png`, name: s.costume || s.eyes }));
 const TRAIT_KEYS = [["costume","Costume"],["skin","Skin"],["face","Face"],["eyes","Eyes"],["nose","Nose"],["mouth","Mouth"],["ears","Ears"],["chest","Chest"],["weapon","Weapon"],["bg","Background"]];
+const CDN = {
+  serumCalm: "/__l5e/assets-v1/1d772da7-cf59-43e6-924f-1af910c12ddd/serum-calm.png",
+  serumMutated: "/__l5e/assets-v1/c8bf6833-9574-446a-874d-4d5b78ce4906/serum-mutated.png",
+};
+const HOTSPOTS = [
+  { id:"tube-pink", label:"Pink serum tube", kind:"spec", i:0, x:8.8, y:13.8, w:7.5, h:20 },
+  { id:"tube-lime", label:"Lime specimen tube", kind:"spec", i:1, x:15.6, y:11.5, w:7.3, h:21 },
+  { id:"tube-blue", label:"Blue specimen tube", kind:"spec", i:3, x:21.3, y:8.2, w:7.1, h:22 },
+  { id:"tube-green", label:"Green specimen tube", kind:"spec", i:4, x:17.7, y:17.5, w:7.3, h:20 },
+  { id:"tube-cyan", label:"Cyan specimen tube", kind:"spec", i:7, x:24.3, y:15.3, w:7.3, h:20 },
+  { id:"tube-purple", label:"Purple specimen tube", kind:"spec", i:9, x:29.6, y:8.2, w:7.4, h:22 },
+  { id:"bottle", label:"Sealed control bottle", kind:"spec", i:13, x:40.6, y:4.5, w:7.2, h:19 },
+  { id:"plate-top", label:"Upper specimen plate", kind:"spec", i:14, x:52.5, y:2.3, w:18, h:15 },
+  { id:"flask-purple", label:"Purple mutation flask", kind:"spec", i:15, x:68.9, y:3, w:17, h:25 },
+  { id:"rack-green", label:"Upper green tube", kind:"spec", i:10, x:87, y:0, w:6.5, h:14 },
+  { id:"rack-orange", label:"Upper orange tube", kind:"spec", i:11, x:93.2, y:0, w:6.5, h:16 },
+  { id:"flask-green", label:"Green mutation flask", kind:"spec", i:11, x:83.8, y:17.8, w:16.2, h:27 },
+  { id:"flask-blue", label:"Blue mutation flask", kind:"spec", i:7, x:0, y:73.5, w:16.2, h:26.5 },
+  { id:"plate-lime", label:"Lava Beast culture plate", kind:"feature", feature:"lava", x:13, y:77, w:17.5, h:20 },
+  { id:"slide-right-a", label:"Hypno Spiral slide", kind:"feature", feature:"hypno", x:89, y:51.5, w:11, h:16 },
+  { id:"slide-right-b", label:"Dragon culture slide", kind:"feature", feature:"dragon", x:91, y:65, w:9, h:15 },
+  { id:"microscope", label:"Microscope specimen viewer", kind:"zoom", i:3, x:0, y:23, w:25, h:49 },
+  { id:"face", label:"Clipboard face traits", kind:"face", i:14, x:52, y:18, w:17, h:23 },
+  { id:"portrait-row", label:"Clipboard specimen profiles", kind:"spec", i:12, x:33, y:37, w:39, h:15 },
+  { id:"dna", label:"DNA mutation sequence", kind:"dna", x:34.5, y:52, w:31, h:18 },
+  { id:"cell-plate", label:"Cell division plate", kind:"spec", i:5, x:60, y:53, w:16, h:18 },
+  { id:"jar-row", label:"Six archived samples", kind:"spec", i:8, x:35, y:71, w:24, h:18 },
+  { id:"sample-row", label:"Control sample strip", kind:"feature", feature:"dragon", x:57.5, y:72, w:17, h:17 },
+  { id:"pipette", label:"Serum pipette", kind:"dna", x:76, y:30, w:8, h:25 },
+  { id:"injector", label:"Mutation injector", kind:"dna", x:77, y:45, w:9, h:27 },
+];
 
 /* ---------- Mutation index (every trait, one at a time) ---------- */
 const T = (dir, list) => list.map(([f, n]) => ({ n, f: `assets/t/${dir}/${f}.png` }));
@@ -59,6 +90,7 @@ const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
 
 /* ---------- Build DOM ---------- */
 function build() {
+  $("#hotlabSpots").innerHTML = HOTSPOTS.map((h, i) => `<button class="hotspot" type="button" data-hotspot="${i}" aria-label="Inspect ${esc(h.label)}" style="--x:${h.x}%;--y:${h.y}%;--w:${h.w}%;--h:${h.h}%"><span>${esc(h.label)}</span></button>`).join("");
   // Specimen shelves (glassware rendered after preload)
   const SHAPE_ORDER = ["flask", "tube", "beaker", "tube", "flask", "beaker", "beaker", "flask", "tube"];
   $("#wall").innerHTML = SPECIMENS.map((s, i) => `
@@ -104,6 +136,68 @@ function build() {
   $$("[data-mint-price]").forEach(e => (e.textContent = CONFIG.MINT_PRICE));
   $$("[data-x-link]").forEach(a => (a.href = CONFIG.X_URL || "#"));
   if (!CONFIG.SUBMIT_URL) $("#demoNote").hidden = false;
+}
+
+/* ---------- Interactive laboratory hotspots ---------- */
+function hotlab() {
+  const dlg = $("#hotdrawer"), body = $("#hotdrawerBody"), title = $("#hotdrawerTitle"), code = $("#hotdrawerCode"), status = $("#hotlabStatus");
+  let loadTimer = 0, mutateTimer = 0, faceTimer = 0;
+  const dnaLoader = `<div class="hotdrawer__loading" role="status"><div class="ld-dna" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><b>DECODING SAMPLE...</b></div>`;
+  const traitList = s => `<dl class="hotdrawer__traits">${TRAIT_KEYS.filter(([k]) => s[k]).map(([k,l]) => `<dt>${l}</dt><dd>${esc(s[k])}</dd>`).join("")}</dl>`;
+  const specimen = i => {
+    const s = SPECIMENS[i];
+    return `<div class="hotdrawer__spec"><div class="hotdrawer__pixel"><img src="${s.url}" alt="${esc(s.name)} mutant specimen"></div><div><p class="sheet__k">Specimen ${String(i + 1).padStart(3,"0")} / 606</p><h3>${esc(s.name)}</h3>${traitList(s)}</div></div>`;
+  };
+  const feature = key => {
+    const data = key === "hypno"
+      ? { title:"Hypno Spiral", img:"assets/t/eyes/hypno-spiral.png", note:"Optical mutation · Eyes", traits:[["Class","Face feature"],["Signal","Spiral lock"],["Observed in","Specimens 004 + 015"]] }
+      : key === "lava"
+      ? { title:"Lava Beast", img:"assets/t/costume/lava-beast.png", note:"Full mutation · Costume", traits:[["Class","Beast"],["Mouth","Lavafall"],["Weapon","Chainsaw"]] }
+      : { title:"Dragon pair", img:"assets/t/costume/dragon-purple-costume.png", note:"Rare mutation · 2 variants", traits:[["Variants","Purple / Black"],["Class","Dragon"],["Supply group","10 Dragons"]] };
+    return `<div class="hotdrawer__spec"><div class="hotdrawer__pixel"><img src="${data.img}" alt="${data.title} trait"></div><div><p class="sheet__k">${data.note}</p><h3>${data.title}</h3><dl class="hotdrawer__traits">${data.traits.map(([a,b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("")}</dl></div></div>`;
+  };
+  const dna = () => `<div class="hotdrawer__dna"><div class="hotdrawer__dnaframe"><img id="dnaState" src="${CDN.serumCalm}" alt="Calm specimen suspended in blue serum"></div><div><p class="sheet__k">Serum M1 · live sequence</p><h3 id="dnaTitle">Control specimen</h3><p id="dnaCopy">Cell structure stable. Mutation compound approaching.</p><div class="hotdrawer__meter"><i></i></div></div></div>`;
+  const face = i => {
+    const s = SPECIMENS[i], sets = [["eyes","nose","mouth"],["face","skin","ears"],["chest","weapon","bg"]];
+    return `<div class="hotdrawer__spec"><div class="hotdrawer__pixel hotdrawer__pixel--face"><img src="${s.url}" alt="Face scan for ${esc(s.name)}"></div><div><p class="sheet__k">Rotating face scan</p><h3>${esc(s.name)}</h3><dl class="hotdrawer__traits" id="faceTraits"></dl><p class="hotdrawer__cycle" id="faceCycle">Set 1 / 3</p></div></div><script type="application/json" id="faceSets">${JSON.stringify(sets)}</script>`;
+  };
+  const zoom = i => {
+    const s = SPECIMENS[i];
+    return `<div class="hotdrawer__zoom"><div class="zoomstage" id="zoomstage"><img id="zoomimg" src="${s.url}" alt="Magnified ${esc(s.name)} specimen"></div><div class="zoomtools" aria-label="Microscope zoom controls"><button type="button" data-zoom="out" aria-label="Zoom out">−</button><button type="button" data-zoom="reset" aria-label="Reset zoom">1:1</button><button type="button" data-zoom="in" aria-label="Zoom in">+</button></div><div><p class="sheet__k">Microscope feed · Specimen ${String(i+1).padStart(3,"0")}</p><h3>${esc(s.name)}</h3>${traitList(s)}</div></div>`;
+  };
+  const wireZoom = () => {
+    const stage = $("#zoomstage"), img = $("#zoomimg"); if (!stage || !img) return;
+    let z = 4, ox = 0, oy = 0, drag = null;
+    const paint = () => { img.style.transform = `translate(${ox}px,${oy}px) scale(${z})`; };
+    const setZoom = (next, px = stage.clientWidth/2, py = stage.clientHeight/2) => { next = Math.max(1,Math.min(16,next)); const k=next/z; ox=px-(px-ox)*k; oy=py-(py-oy)*k; z=next; paint(); };
+    const wheel = e => { e.preventDefault(); const r=stage.getBoundingClientRect(), dy=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?100:1); setZoom(z*Math.exp(-dy*.0015),e.clientX-r.left,e.clientY-r.top); };
+    stage.addEventListener("wheel", wheel, { passive:false });
+    stage.addEventListener("pointerdown", e => { drag={x:e.clientX,y:e.clientY,ox,oy}; stage.setPointerCapture(e.pointerId); });
+    stage.addEventListener("pointermove", e => { if(!drag)return; ox=drag.ox+e.clientX-drag.x; oy=drag.oy+e.clientY-drag.y; paint(); });
+    stage.addEventListener("pointerup", () => drag=null); stage.addEventListener("pointercancel", () => drag=null);
+    $$("[data-zoom]",body).forEach(b => b.addEventListener("click",()=>{ const a=b.dataset.zoom; if(a==="reset"){z=4;ox=oy=0;paint();} else setZoom(z*(a==="in"?1.5:1/1.5)); })); paint();
+  };
+  const wireFace = i => {
+    const s=SPECIMENS[i], sets=[["eyes","nose","mouth"],["face","skin","ears"],["chest","weapon","bg"]]; let at=0;
+    const draw=()=>{ const keys=sets[at].filter(k=>s[k]); $("#faceTraits").innerHTML=keys.map(k=>`<dt>${esc(TRAIT_KEYS.find(([x])=>x===k)?.[1]||k)}</dt><dd>${esc(s[k])}</dd>`).join(""); $("#faceCycle").textContent=`Set ${at+1} / ${sets.length}`; };
+    draw(); faceTimer=setInterval(()=>{at=(at+1)%sets.length;draw();},1800);
+  };
+  const show = h => {
+    clearTimeout(loadTimer); clearTimeout(mutateTimer); clearInterval(faceTimer);
+    title.textContent=h.label; code.textContent=`MF-606 · ${h.id.toUpperCase()}`; body.innerHTML=dnaLoader;
+    if(!dlg.open) dlg.showModal(); status.textContent=`Inspecting ${h.label}`;
+    loadTimer=setTimeout(()=>{
+      body.innerHTML=h.kind==="spec"?specimen(h.i):h.kind==="feature"?feature(h.feature):h.kind==="dna"?dna():h.kind==="face"?face(h.i):zoom(h.i);
+      body.classList.remove("is-reveal"); void body.offsetWidth; body.classList.add("is-reveal");
+      if(h.kind==="zoom") wireZoom();
+      if(h.kind==="face") wireFace(h.i);
+      if(h.kind==="dna") mutateTimer=setTimeout(()=>{ const img=$("#dnaState"); if(!img)return; img.classList.add("is-mutating"); setTimeout(()=>{ img.src=CDN.serumMutated; img.alt="Mutated specimen suspended in green serum"; $("#dnaTitle").textContent="Mutation confirmed"; $("#dnaCopy").textContent="Serum M1 bonded. Cell structure rewritten."; },260); },1200);
+    }, reduced()?0:420);
+  };
+  $$("[data-hotspot]").forEach(b=>b.addEventListener("click",()=>show(HOTSPOTS[+b.dataset.hotspot])));
+  const close=()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);dlg.close();status.textContent="Select a pulsing marker to inspect it.";};
+  $("#hotdrawerClose").addEventListener("click",close);
+  dlg.addEventListener("click",e=>{if(e.target===dlg)close();});
 }
 
 /* ---------- Preloader ---------- */
@@ -734,7 +828,7 @@ let booted = false;
 preload().then(() => {
   if (booted) return; booted = true;
   initArts();
-  flaskLab(); shelves(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); magic(); pad();
+  flaskLab(); shelves(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); magic(); pad(); hotlab();
   requestAnimationFrame(() => requestAnimationFrame(reveal));
   setTimeout(reveal, 60);
 });
