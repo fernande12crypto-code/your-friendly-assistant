@@ -1,2 +1,2 @@
 [run]
-build:dev = "node --check public/main.js"
+build:dev = "npm run build:dev"
