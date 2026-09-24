@@ -1,2 +1,2 @@
 [run]
-build:dev = "node --check public/main.js "node --check public/main.js""node --check public/main.js" rm -rf dist "node --check public/main.js""node --check public/main.js" cp -r public dist"
+build:dev = "npm run build:dev"
