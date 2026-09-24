@@ -102,7 +102,7 @@ const rnd = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
 
 /* ---------- Build DOM ---------- */
 function build() {
-  $("#hotlabSpots").innerHTML = HOTSPOTS.map((h, i) => `<button class="hotspot" type="button" data-hotspot="${i}" aria-label="Inspect ${esc(h.label)}" style="--x:${h.x}%;--y:${h.y}%;--w:${h.w}%;--h:${h.h}%"><span>${esc(h.label)}</span></button>`).join("");
+  $("#hotlabSpots").innerHTML = HOTSPOTS.map((h, i) => `<button class="anahot" type="button" data-anahot="${i}" aria-label="Inspect ${esc(h.label)}" style="--x:${h.x}%;--y:${h.y}%;--w:${h.w}%;--h:${h.h}%"><span>${esc(h.label)}</span></button>`).join("");
   // Specimen shelves (glassware rendered after preload)
   const SHAPE_ORDER = ["flask", "tube", "beaker", "tube", "flask", "beaker", "beaker", "flask", "tube"];
   $("#wall").innerHTML = SPECIMENS.map((s, i) => `
@@ -150,7 +150,7 @@ function build() {
   if (!CONFIG.SUBMIT_URL) $("#demoNote").hidden = false;
 }
 
-/* ---------- Interactive laboratory hotspots ---------- */
+/* ---------- Interactive laboratory anahots ---------- */
 function hotlab() {
   const dlg = $("#hotdrawer"), body = $("#hotdrawerBody"), title = $("#hotdrawerTitle"), code = $("#hotdrawerCode");
   let loadTimer = 0, mutateTimer = 0, faceTimer = 0;
@@ -206,7 +206,7 @@ function hotlab() {
       if(h.kind==="dna") mutateTimer=setTimeout(()=>{ const img=$("#dnaState"); if(!img)return; img.classList.add("is-mutating"); setTimeout(()=>{ img.src=CDN.serumMutated; img.alt="Mutated specimen suspended in green serum"; $("#dnaTitle").textContent="Mutation confirmed"; $("#dnaCopy").textContent="Serum M1 bonded. Cell structure rewritten."; },260); },1200);
     }, reduced()?0:420);
   };
-  $$("[data-hotspot]").forEach(b=>b.addEventListener("click",()=>show(HOTSPOTS[+b.dataset.hotspot])));
+  $$("[data-anahot]").forEach(b=>b.addEventListener("click",()=>show(HOTSPOTS[+b.dataset.anahot])));
   const close=()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);dlg.close();};
   $("#hotdrawerClose").addEventListener("click",close);
   dlg.addEventListener("click",e=>{if(e.target===dlg)close();});
@@ -544,6 +544,21 @@ function researchLab() {
     ["Costume",s.costume,"costume"],
     ["Weapon",s.weapon,"weapon"]
   ];
+  const stage=$("#anatomyStage"), tip=$("#anaTip");
+  let current=SPECIMENS[0];
+  const partInfo={eyes:["Eyes",s=>s.eyes],mouth:["Mouth",s=>s.mouth||s.face],body:["Body",s=>s.chest],weapon:["Weapon",s=>s.weapon],costume:["Costume",s=>s.costume]};
+  const hideTip=()=>{tip.classList.remove("is-on");$$(".anahot",stage).forEach(h=>h.classList.remove("is-on"));};
+  const showTip=h=>{
+    const [label,get]=partInfo[h.dataset.part]; const v=get(current);
+    $("#anaTipLabel").textContent=label; $("#anaTipValue").textContent=v||"None detected";
+    const sr=stage.getBoundingClientRect(), hr=h.getBoundingClientRect();
+    const y=hr.top+hr.height/2-sr.top, x=hr.left+hr.width/2-sr.left;
+    tip.style.top=`${y-tip.offsetHeight/2}px`;
+    tip.style.setProperty("--len",`${Math.max(20,(sr.width-sr.width*0.02-tip.offsetWidth)-x)}px`);
+    $$(".anahot",stage).forEach(o=>o.classList.toggle("is-on",o===h)); tip.classList.add("is-on");
+  };
+  $$(".anahot",stage).forEach(h=>{h.addEventListener("mouseenter",()=>showTip(h));h.addEventListener("focus",()=>showTip(h));h.addEventListener("click",()=>showTip(h));});
+  $(".anatomy__figure",stage).addEventListener("mouseleave",hideTip);
   const render = i => {
     const s=SPECIMENS[i], id=`MF-606-${String(i+1).padStart(3,"0")}`, name=mutation(s), rank=rarity(s), choices=traitChoices(s);
     fields.specimen.src=fields.silhouette.src=fields.anatomy.src=fields.reaction.src=s.url;
@@ -551,9 +566,7 @@ function researchLab() {
     fields.rarity.textContent=fields.rarityTag.textContent=rank; fields.mutation.textContent=name;
     fields.mutationTag.textContent=(s.costume?"COSTUME":s.face==="Exposed Jaw"?"ANATOMICAL":"CELLULAR")+" MUTATION";
     fields.classification.textContent=`${s.face} / ${s.skin}`; fields.description.textContent=descriptions[i%descriptions.length]; fields.result.textContent=name;
-    $("#calloutA").textContent="Eyes"; $("#calloutAv").textContent=s.eyes;
-    $("#calloutB").textContent=s.mouth?"Mouth":"Face"; $("#calloutBv").textContent=s.mouth||s.face;
-    $("#calloutC").textContent=s.costume?"Costume":"Body"; $("#calloutCv").textContent=s.costume||s.chest;
+    current=s; hideTip();
     traits.innerHTML=choices.map(([label,value,kind],k)=>{
       const missing=!value, status=missing ? `${label} scan failed · no trait signature detected` : `${label} · ${value}`;
       return `<button class="traitbtn${k===0?" is-active":""}${missing?" is-unavailable":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Scan failed — no trait signature detected")}">${missing?`<span class="traitbtn__missing" aria-hidden="true">SCAN<br>FAILED</span>`:`<img src="${traitAsset(kind,value,s)}" alt="${esc(value)} ${esc(label.toLowerCase())} trait">`}<span>${esc(label)}</span><small>${esc(missing?"No trait detected":value)}</small><i class="sr-only">${esc(status)}</i></button>`;
