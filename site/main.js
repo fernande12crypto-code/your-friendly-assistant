@@ -555,8 +555,8 @@ function researchLab() {
     $("#calloutB").textContent=s.mouth?"Mouth":"Face"; $("#calloutBv").textContent=s.mouth||s.face;
     $("#calloutC").textContent=s.costume?"Costume":"Body"; $("#calloutCv").textContent=s.costume||s.chest;
     traits.innerHTML=choices.map(([label,value,kind],k)=>{
-      const missing=!value, status=missing ? `${label} scan · trait not detected` : `${label} · ${value}`;
-      return `<button class="traitbtn${k===0?" is-active":""}${missing?" is-unavailable":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Trait not detected")}">${missing?`<span class="traitbtn__missing" aria-hidden="true">NO<br>SIGNAL</span>`:`<img src="${traitAsset(kind,value,s)}" alt="${esc(value)} ${esc(label.toLowerCase())} trait">`}<span>${esc(label)}</span><small>${esc(missing?"Not detected":value)}</small><i class="sr-only">${esc(status)}</i></button>`;
+      const missing=!value, status=missing ? `${label} scan failed · no trait signature detected` : `${label} · ${value}`;
+      return `<button class="traitbtn${k===0?" is-active":""}${missing?" is-unavailable":""}" type="button" data-trait-label="${esc(label)}" data-trait-value="${esc(value||"Scan failed — no trait signature detected")}">${missing?`<span class="traitbtn__missing" aria-hidden="true">SCAN<br>FAILED</span>`:`<img src="${traitAsset(kind,value,s)}" alt="${esc(value)} ${esc(label.toLowerCase())} trait">`}<span>${esc(label)}</span><small>${esc(missing?"No trait detected":value)}</small><i class="sr-only">${esc(status)}</i></button>`;
     }).join("");
     $("#labTraitDetail").textContent=`Eyes · ${s.eyes} isolated trait scan`;
     $$("[data-lab-spec]").forEach((b,k)=>{b.classList.toggle("is-active",k===i);b.setAttribute("aria-pressed",String(k===i));});
