@@ -75,51 +75,87 @@
 
 
 
-<section class="desk" id="lab" aria-labelledby="heroTitle">
-  <div class="desk__crop">
-    <img class="desk__img" src="assets/lab-desk.jpg" alt="" width="1415" height="1111">
-    <div class="wrap desk__stage">
-  <article class="report" id="experiment">
-    <header class="report__head"><span>Lab report 01 · Experiment</span><span>MF-606 · page 1 / 3</span></header>
-    <div class="report__split">
-      <div class="report__col">
-        <h1 class="report__title" id="heroTitle">Method &amp; results</h1>
-        <p class="magic" data-magic>606 pixel mutants. 604 escaped the lab. 2 were never supposed to exist. One drop of Serum M1 is enough to turn a calm specimen into a mutant.</p>
-        <table class="data">
-        <caption class="kicker">Table 1 · Batch data</caption>
-        <tbody>
-          <tr><th scope="row">Supply (n)</th><td>606</td></tr>
-          <tr><th scope="row">Costumes</th><td>14</td></tr>
-          <tr><th scope="row">Devil 1/1</th><td>2</td></tr>
-          <tr><th scope="row">Medium</th><td>Zcash, shielded</td></tr>
-        </tbody>
-      </table>
+<section class="research" id="lab" aria-labelledby="heroTitle">
+  <header class="research__bar">
+    <div class="research__brand"><span class="atom" aria-hidden="true">✣</span><span><b>MF-606</b><small>Mutant research lab</small></span></div>
+    <div class="research__report"><b>Lab report</b><span>02 / Experiment</span></div>
+    <div class="research__status"><span>Page 2 / 4</span><i aria-label="System online"></i><b>||||||||</b></div>
+  </header>
+
+  <div class="research__grid">
+    <aside class="vials" aria-label="Select specimen">
+      <div class="vials__label"><span>Specimen</span><b id="labSelectorId">MF-606-001</b></div>
+      <div class="vials__list" id="labSelectors"></div>
+    </aside>
+
+    <section class="chamber" aria-label="Active specimen chamber">
+      <div class="dropper" aria-hidden="true"><i></i></div>
+      <div class="chamber__tube" aria-hidden="true"><i></i></div>
+      <div class="chamber__flask" id="labFlask">
+        <span class="chamber__shine" aria-hidden="true"></span>
+        <span class="bubble bubble--1" aria-hidden="true"></span><span class="bubble bubble--2" aria-hidden="true"></span><span class="bubble bubble--3" aria-hidden="true"></span><span class="bubble bubble--4" aria-hidden="true"></span>
+        <img id="labSpecimen" src="assets/m/01.png" alt="Selected mutant specimen">
       </div>
-      <figure class="bench" aria-labelledby="fig1">
-      <div class="bench__rig">
-        <div class="flask" id="flask" role="img" aria-label="A drop of green serum falls into a glass flask and the specimen inside mutates">
-          <canvas id="flaskCanvas" width="96" height="136"></canvas>
-          <span class="note" style="left:56%;top:4%"><span>(a) Serum M1</span></span>
-          <span class="note" style="left:60%;top:28%"><span>(b) Flask, 500 ml</span></span>
-          <span class="note" style="left:74%;top:78%"><span>(c) Specimen</span></span>
-        </div>
+      <div class="chamber__base" aria-hidden="true"><i></i></div>
+      <span class="chamber__scan">Live containment · M1</span>
+    </section>
+
+    <section class="specdata techpanel" aria-labelledby="heroTitle">
+      <div class="techpanel__title">Specimen details</div>
+      <div class="specdata__heading">
+        <div><h1 id="heroTitle">CYCLOPS</h1><div class="specdata__tags"><b id="labMutationTag">FACE MUTATION</b><span id="labRarityTag">UNCOMMON</span></div></div>
+        <img id="labSilhouette" src="assets/m/01.png" alt="Specimen silhouette">
       </div>
-            <figcaption id="fig1"><b>Fig. 1.</b> One drop of Serum M1 applied to a control specimen.</figcaption>
-      <ol class="log" id="obsLog" aria-hidden="true">
-        <li><time>t+0.00 s</time><span>Control specimen stable</span></li>
-        <li><time>t+1.00 s</time><span>Serum M1 applied, 1 drop</span></li>
-        <li><time>t+1.95 s</time><span>Contact. Cells breaking</span></li>
-        <li><time>t+2.65 s</time><span>Result: <b id="obsResult">mutant</b></span></li>
+      <p id="labDescription">A classified mutant strain formed after Serum M1 exposure. Cellular instability remains under continuous observation.</p>
+      <dl class="specdata__rows">
+        <div><dt>Specimen ID</dt><dd id="labId">MF-606-001</dd></div>
+        <div><dt>Rarity</dt><dd id="labRarity">Uncommon</dd></div>
+        <div><dt>Mutation</dt><dd id="labMutation">Cyclops</dd></div>
+        <div><dt>Serum</dt><dd>M1</dd></div>
+        <div><dt>Supply</dt><dd>606</dd></div>
+        <div><dt>Costume slots</dt><dd>14</dd></div>
+        <div><dt>Classification</dt><dd id="labClass">Face / Melting</dd></div>
+        <div><dt>Medium</dt><dd>Zcash, shielded</dd></div>
+      </dl>
+    </section>
+
+    <section class="anatomy techpanel">
+      <div class="techpanel__title">Anatomy diagram</div>
+      <div class="anatomy__stage">
+        <span class="scanline" aria-hidden="true"></span>
+        <img id="labAnatomy" src="assets/m/01.png" alt="Enlarged anatomy scan of selected mutant">
+        <span class="callout callout--a"><i></i><b id="calloutA">Eyes</b><small id="calloutAv">Cyclops</small></span>
+        <span class="callout callout--b"><i></i><b id="calloutB">Mouth</b><small id="calloutBv">Forked Tongue</small></span>
+        <span class="callout callout--c"><i></i><b id="calloutC">Body</b><small id="calloutCv">Stitched Jacket</small></span>
+      </div>
+    </section>
+
+    <section class="reaction techpanel">
+      <div class="techpanel__title">Serum reaction</div>
+      <div class="reaction__flow">
+        <div><span class="mini-vial mini-vial--pink" aria-hidden="true"></span><small>Serum M1</small></div><b>+</b>
+        <div><img src="assets/control.png" alt="Control specimen"><small>Control specimen</small></div><b class="reaction__arrow">➜</b>
+        <div><img id="labReaction" src="assets/m/01.png" alt="Mutated specimen result"><small>Mutated specimen</small></div>
+      </div>
+    </section>
+
+    <section class="timeline techpanel">
+      <div class="techpanel__title">Experiment timeline</div>
+      <ol>
+        <li class="is-complete"><b>01</b><time>T+0.00s</time><span>Control specimen<br>stable</span></li>
+        <li><b>02</b><time>T+1.00s</time><span>Serum M1 applied<br>1 drop</span></li>
+        <li><b>03</b><time>T+1.98s</time><span>Contact<br>Cells breaking</span></li>
+        <li class="is-result"><b>04</b><time>T+2.65s</time><span>Result<br><strong id="labResult">Cyclops</strong></span></li>
       </ol>
-    </figure>
-    </div>
-  </article>
-    </div>
+    </section>
+
+    <section class="traitscan techpanel">
+      <div class="techpanel__title">Traits preview</div>
+      <div class="traitscan__grid" id="labTraits"></div>
+      <div class="traitscan__detail" id="labTraitDetail" aria-live="polite">Select a trait to inspect its classification.</div>
+    </section>
   </div>
-  <div class="wrap desk__cta">
-    <a class="btn" href="#apply">Get mutated <span class="btn__arrow" aria-hidden="true"></span></a>
-    <a class="btn btn--white" href="#specimens">See specimens</a>
-  </div>
+  <nav class="research__tabs" aria-label="Laboratory views"><a class="is-active" href="#lab">Overview</a><a href="#lab">Anatomy</a><a href="#traits">Genetics</a><a href="#traits">Traits</a><a href="#devil">History</a><a class="research__collection" href="#specimens">View in collection →</a></nav>
 </section>
 
 <div class="ribbons" aria-hidden="true">
