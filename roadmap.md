@@ -1,0 +1,6 @@
+- [x] Move the interactive lab directly above the footer
+- [x] Hide hotspot markers while preserving hover labels and click actions
+- [x] Remove Abstract and renumber the remaining reports to 1–3
+- [x] Remove the Top Secret report control and dialog
+- [x] Make all scroll-reveal text visible immediately
+- [x] Verify desktop/mobile behavior and page errors
