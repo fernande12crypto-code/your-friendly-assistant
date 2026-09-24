@@ -140,7 +140,7 @@ function build() {
 
 /* ---------- Interactive laboratory hotspots ---------- */
 function hotlab() {
-  const dlg = $("#hotdrawer"), body = $("#hotdrawerBody"), title = $("#hotdrawerTitle"), code = $("#hotdrawerCode"), status = $("#hotlabStatus");
+  const dlg = $("#hotdrawer"), body = $("#hotdrawerBody"), title = $("#hotdrawerTitle"), code = $("#hotdrawerCode");
   let loadTimer = 0, mutateTimer = 0, faceTimer = 0;
   const dnaLoader = `<div class="hotdrawer__loading" role="status"><div class="ld-dna" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><b>DECODING SAMPLE...</b></div>`;
   const traitList = s => `<dl class="hotdrawer__traits">${TRAIT_KEYS.filter(([k]) => s[k]).map(([k,l]) => `<dt>${l}</dt><dd>${esc(s[k])}</dd>`).join("")}</dl>`;
@@ -185,7 +185,7 @@ function hotlab() {
   const show = h => {
     clearTimeout(loadTimer); clearTimeout(mutateTimer); clearInterval(faceTimer);
     title.textContent=h.label; code.textContent=`MF-606 · ${h.id.toUpperCase()}`; body.innerHTML=dnaLoader;
-    if(!dlg.open) dlg.showModal(); status.textContent=`Inspecting ${h.label}`;
+    if(!dlg.open) dlg.showModal();
     loadTimer=setTimeout(()=>{
       body.innerHTML=h.kind==="spec"?specimen(h.i):h.kind==="feature"?feature(h.feature):h.kind==="dna"?dna():h.kind==="face"?face(h.i):zoom(h.i);
       body.classList.remove("is-reveal"); void body.offsetWidth; body.classList.add("is-reveal");
@@ -195,10 +195,10 @@ function hotlab() {
     }, reduced()?0:420);
   };
   $$("[data-hotspot]").forEach(b=>b.addEventListener("click",()=>show(HOTSPOTS[+b.dataset.hotspot])));
-  const close=()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);dlg.close();status.textContent="Select a pulsing marker to inspect it.";};
+  const close=()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);dlg.close();};
   $("#hotdrawerClose").addEventListener("click",close);
   dlg.addEventListener("click",e=>{if(e.target===dlg)close();});
-  dlg.addEventListener("cancel",()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);status.textContent="Select a pulsing marker to inspect it.";});
+  dlg.addEventListener("cancel",()=>{clearTimeout(loadTimer);clearTimeout(mutateTimer);clearInterval(faceTimer);});
   document.addEventListener("mf:specimen",e=>show({id:`shelf-${e.detail+1}`,label:`Specimen shelf ${String(e.detail+1).padStart(2,"0")}`,kind:"spec",i:e.detail}));
 }
 
@@ -587,60 +587,6 @@ function index(root) {
   render();
 }
 
-/* ---------- Scroll-revealed text ---------- */
-function magic() {
-  const els = $$("[data-magic]");
-  els.forEach(el => { const words = el.textContent.trim().split(/\s+/);
-    el.innerHTML = words.map(w => `<span class="mw"><span class="mw__g" aria-hidden="true">${esc(w)}</span><span class="mw__t">${esc(w)}</span></span>`).join(" ");
-    el._w = [...el.querySelectorAll(".mw__t")]; });
-  if (reduced()) { document.body.classList.add("no-magic"); return; }
-  let tick = false;
-  const update = () => { tick = false; const vh = innerHeight;
-    els.forEach(el => { const r = el.getBoundingClientRect(); if (r.bottom < -vh || r.top > vh * 1.5) return;
-      const p = Math.max(0, Math.min(1, (vh * .9 - r.top) / (vh * .65))), n = el._w.length;
-      el._w.forEach((w, k) => { w.style.opacity = Math.max(0, Math.min(1, (p - k / n) * n)); }); }); };
-  addEventListener("scroll", () => { if (!tick) { tick = true; requestAnimationFrame(update); } }, { passive: true });
-  addEventListener("resize", update); update();
-}
-
-/* ---------- Report pad (dialog) ---------- */
-function pad() {
-  const dlg = $("#pad"), page = $("#padPage"), num = $("#padNum"), sec = $("#padSection"), prev = $("#padPrev"), next = $("#padNext");
-  const tests = { all: () => true, costume: s => !!s.costume, melting: s => s.face === "Melting", jaw: s => s.face === "Exposed Jaw" };
-  let filter = "all", at = 0;
-  const table = $("#experiment table") ? $("#experiment table").outerHTML : "";
-  const cnt = k => SPECIMENS.filter(tests[k]).length;
-  const pages = () => {
-    const list = SPECIMENS.map((s, i) => [s, i]).filter(([s]) => tests[filter](s));
-    return [
-      { t: "Summary", h: `<p class="sheet__k">Report 01 · Summary</p><p class="pad__big">606 pixel mutants. 604 escaped the lab. 2 were never supposed to exist.</p>${table}` },
-      { t: "Abstract", h: `<p class="sheet__k">Report 02 · Abstract</p><p class="pad__lead">Serum M1 was brewed to make guards for the shielded pool. One cracked vial later, the lab held 606 mutants. 604 got out and two were never logged. The art is loud. The owners stay shielded.</p><p><b>Keywords:</b> pixel art, 44×44 grid, Zcash, shielded ownership, uncontrolled mutation</p>` },
-      { t: "Specimen shelves", h: `<p class="sheet__k">Report 03 · Specimen shelves</p><p class="pad__big">Specimen shelves</p><p class="pad__lead">One specimen per page. Pick a shelf, then turn the page.</p>
-        <div class="filters" role="group" aria-label="Filter specimen pages">${[["all","All"],["costume","Costumes"],["melting","Melting"],["jaw","Exposed Jaw"]].map(([k, l]) => `<button class="chip${k === filter ? " is-on" : ""}" type="button" data-pf="${k}" aria-pressed="${k === filter}">${l} <span>${cnt(k)}</span></button>`).join("")}</div>` },
-      ...list.map(([s, i]) => ({ t: "Specimen shelves", spec: i, h: `<div class="sheet"><div class="sheet__glass"><canvas aria-hidden="true"></canvas><span class="shelf" aria-hidden="true"></span></div>
-        <div><p class="sheet__k">Specimen sheet</p><h3>${esc(s.name)}</h3><dl>${TRAIT_KEYS.filter(([k]) => s[k]).map(([k, l]) => `<dt>${l}</dt><dd>${esc(s[k])}</dd>`).join("")}</dl></div></div>` })),
-      { t: "Mutation index", pt: true, h: `<p class="sheet__k">Report 04 · Mutation index</p><p class="pad__big">The periodic table of mutations</p><div data-pad-pt></div>` },
-    ];
-  };
-  const show = (n, flip = true) => {
-    const P = pages(); at = Math.max(0, Math.min(P.length - 1, n)); const p = P[at];
-    page.innerHTML = p.h; sec.textContent = p.t; num.textContent = `${at + 1} / ${P.length}`;
-    prev.disabled = at === 0; next.disabled = at === P.length - 1;
-    if (p.spec != null) { const cv = page.querySelector("canvas"); renderGlass(cv, "flask", spriteNoBg(SPECIMENS[p.spec].url));
-      const dpr = devicePixelRatio || 1; page.querySelector(".sheet__glass").style.setProperty("--cell", Math.max(1, Math.round((innerWidth < 600 ? 2.5 : 3.5) * dpr)) / dpr + "px"); }
-    if (p.pt) { const r = page.querySelector("[data-pad-pt]"); r.innerHTML = ptHTML(); index(r); }
-    page.scrollTop = 0;
-    if (flip && !reduced()) { page.classList.remove("is-flip"); void page.offsetWidth; page.classList.add("is-flip"); }
-  };
-  page.addEventListener("click", e => { const b = e.target.closest("[data-pf]"); if (b) { filter = b.dataset.pf; show(at, false); } });
-  prev.addEventListener("click", () => show(at - 1));
-  next.addEventListener("click", () => show(at + 1));
-  $("#padClose").addEventListener("click", () => dlg.close());
-  dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
-  dlg.addEventListener("keydown", e => { if (e.target.closest("input,textarea,.ttab")) return; if (e.key === "ArrowRight") show(at + 1); if (e.key === "ArrowLeft") show(at - 1); });
-  $("#openPad").addEventListener("click", () => { show(0, false); dlg.showModal(); next.focus(); });
-}
-
 /* ---------- Nav ---------- */
 function nav() {
   const burger = $("#burger"), links = $("#navLinks");
@@ -830,7 +776,7 @@ let booted = false;
 preload().then(() => {
   if (booted) return; booted = true;
   initArts();
-  flaskLab(); shelves(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); magic(); pad(); hotlab();
+  flaskLab(); shelves(); wall(); $$("[data-pt]").forEach(index); nav(); devilCam(); form(); hotlab();
   requestAnimationFrame(() => requestAnimationFrame(reveal));
   setTimeout(reveal, 60);
 });

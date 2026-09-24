@@ -73,29 +73,14 @@
 
 <main id="main">
 
-<section class="hotlab" id="hotlab" aria-labelledby="hotlabTitle">
-  <div class="wrap hotlab__head">
-    <p class="kicker">Live containment map · MF-606</p>
-    <h1 id="hotlabTitle">Touch the experiment.</h1>
-    <p>Every marked object holds a specimen, mutation, or lab record.</p>
-  </div>
-  <div class="hotlab__frame" id="hotlabFrame">
-    <img class="hotlab__art" src="https://id-preview--6b184a85-d85b-4d54-8732-baeab7bf94a8.lovable.app/__l5e/assets-v1/8b6f5af5-f4be-4dc5-b544-5fef1a30d91d/serumform.png" alt="Illustrated MUTANTFOOTS laboratory desk with test tubes, flasks, microscope, DNA diagram, specimen plates and report clipboard" width="1415" height="1111">
-    <div class="hotlab__spots" id="hotlabSpots" aria-label="Interactive laboratory objects"></div>
-  </div>
-  <p class="hotlab__status" id="hotlabStatus" aria-live="polite">Select a pulsing marker to inspect it.</p>
-</section>
+
 
 <section class="desk" id="lab" aria-labelledby="heroTitle">
   <div class="desk__crop">
     <img class="desk__img" src="assets/lab-desk.jpg" alt="" width="1415" height="1111">
-    <button class="dossier" type="button" id="openPad" aria-haspopup="dialog" aria-controls="pad" aria-label="Open top secret lab report MF-606">
-      <span class="dossier__page" aria-hidden="true"><b></b><i></i><i></i><i></i><i></i><i></i><s>TS</s></span>
-      <span class="dossier__txt" aria-hidden="true"><span class="dossier__blink">Top secret</span><span class="dossier__sub">Report MF-606 · tap to read</span></span>
-    </button>
     <div class="wrap desk__stage">
   <article class="report" id="experiment">
-    <header class="report__head"><span>Lab report 01 · Experiment</span><span>MF-606 · page 1 / 4</span></header>
+    <header class="report__head"><span>Lab report 01 · Experiment</span><span>MF-606 · page 1 / 3</span></header>
     <div class="report__split">
       <div class="report__col">
         <h1 class="report__title" id="heroTitle">Method &amp; results</h1>
@@ -144,14 +129,8 @@
 
 <section class="reports" aria-label="Lab reports">
   <div class="wrap reports__stack">
-  <article class="report" id="abstract">
-    <header class="report__head"><span>Lab report 02 · Abstract</span><span>MF-606 · page 2 / 4</span></header>
-    <h2 class="report__title">Abstract</h2>
-    <p class="magic" data-magic>Serum M1 was brewed to make guards for the shielded pool. One cracked vial later, the lab held 606 mutants. 604 got out and two were never logged. The art is loud. The owners stay shielded.</p>
-    <p class="report__kw"><b>Keywords:</b> pixel art, 44×44 grid, Zcash, shielded ownership, uncontrolled mutation</p>
-  </article>
   <article class="report" id="specimens">
-    <header class="report__head"><span>Lab report 03 · Specimen shelves</span><span>MF-606 · page 3 / 4</span></header>
+    <header class="report__head"><span>Lab report 02 · Specimen shelves</span><span>MF-606 · page 2 / 3</span></header>
     <div class="report__row"><h2 class="report__title" id="wallTitle">Specimen shelves</h2>
       <p class="magic magic--sm" data-magic>Every sample is kept in its own glass. Hover or tap one to read its trait sheet.</p></div>
     <div class="filters" role="group" aria-label="Filter specimens" id="filters">
@@ -164,7 +143,7 @@
     <div class="shelves" id="wall"></div>
   </article>
   <article class="report" id="traits">
-    <header class="report__head"><span>Lab report 04 · Mutation index</span><span>MF-606 · page 4 / 4</span></header>
+    <header class="report__head"><span>Lab report 03 · Mutation index</span><span>MF-606 · page 3 / 3</span></header>
     <div class="report__row"><h2 class="report__title" id="traitsTitle">The periodic table of mutations</h2>
       <p class="magic magic--sm" data-magic>Ten trait groups and one anomaly. Pick an element to study every variant.</p></div>
     <div data-pt id="pt"></div>
@@ -262,6 +241,18 @@
   </div>
 </section>
 
+<section class="hotlab" id="hotlab" aria-labelledby="hotlabTitle">
+  <div class="wrap hotlab__head">
+    <p class="kicker">Live containment map · MF-606</p>
+    <h1 id="hotlabTitle">Touch the experiment.</h1>
+    <p>Move over an object to identify it, then click to inspect.</p>
+  </div>
+  <div class="hotlab__frame" id="hotlabFrame">
+    <img class="hotlab__art" src="https://id-preview--6b184a85-d85b-4d54-8732-baeab7bf94a8.lovable.app/__l5e/assets-v1/8b6f5af5-f4be-4dc5-b544-5fef1a30d91d/serumform.png" alt="Illustrated MUTANTFOOTS laboratory desk with test tubes, flasks, microscope, DNA diagram, specimen plates and report clipboard" width="1415" height="1111">
+    <div class="hotlab__spots" id="hotlabSpots" aria-label="Interactive laboratory objects"></div>
+  </div>
+</section>
+
 </main>
 
 <footer class="foot">
@@ -278,21 +269,6 @@
 
 </div>
 
-<dialog class="pad" id="pad" aria-labelledby="padTitle">
-  <div class="pad__board">
-    <span class="pad__clip" aria-hidden="true"></span>
-    <div class="pad__paper">
-      <header class="pad__head"><span id="padTitle">Lab report MF-606</span><span id="padSection"></span>
-        <button class="pad__x" type="button" id="padClose" aria-label="Close report"><i aria-hidden="true"></i></button></header>
-      <div class="pad__page" id="padPage" aria-live="polite"></div>
-      <footer class="pad__nav">
-        <button class="btn btn--sm btn--white" type="button" id="padPrev">Previous page</button>
-        <span id="padNum">1 / 1</span>
-        <button class="btn btn--sm" type="button" id="padNext">Next page <span class="btn__arrow" aria-hidden="true"></span></button>
-      </footer>
-    </div>
-  </div>
-</dialog>
 
 <dialog class="hotdrawer" id="hotdrawer" aria-labelledby="hotdrawerTitle">
   <div class="hotdrawer__panel">
